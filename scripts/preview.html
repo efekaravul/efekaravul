@@ -2,16 +2,17 @@
 <meta charset="utf-8">
 <title>profile art preview</title>
 <style>
-  body { background:#010409; margin:0; padding:24px; font-family:system-ui; }
-  .wrap { max-width:900px; margin:0 auto; text-align:center; }
-  img { display:inline-block; vertical-align:top; }
-  button { margin-top:20px; font:13px system-ui; padding:6px 14px; }
+  body { background:#0d1117; margin:0; padding:24px; font-family:system-ui; }
+  /* Roughly the width of GitHub's profile README column, which is what the
+     panels actually have to survive. */
+  .wrap { max-width:845px; margin:0 auto; text-align:center; }
+  img { display:block; max-width:100%; margin:0 auto 18px; }
+  button { font:13px system-ui; padding:6px 14px; }
 </style>
 <div class="wrap">
   <img src="../assets/contrib-heatmap.svg" width="860">
-  <br><br>
-  <img src="../assets/avatar-mosaic.svg" width="370">
-  <img src="../assets/info-card.svg" width="490">
-  <br>
-  <button onclick="location.reload()">Replay animation</button>
+  <img src="../assets/whoami.svg" width="860">
+  <img src="../assets/portfolio.svg" width="860">
+  <img src="../assets/focus.svg" width="860">
+  <button onclick="location.reload()">Replay</button>
 </div>
