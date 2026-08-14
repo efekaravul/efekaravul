@@ -17,7 +17,7 @@ PANEL_W = 860.0
 TITLEBAR_H = 36.0
 PAD_X = 18.0
 
-CYCLE = 14.0        # seconds; the reveal takes ~2.5s and the rest is hold time
+CYCLE = 6.0         # seconds; the reveal takes ~2.3s and the rest is hold time
 
 BG = "#0d1117"
 BORDER = "#30363d"

@@ -40,7 +40,7 @@ fitting — which is what happens if a panel is split in two.
 **Animations loop rather than freezing.** An SVG's clock starts when the image
 loads, so a play-once-and-freeze reveal is over before a reader has scrolled to
 it and reads as a static picture. Each animation instead holds hidden until its
-turn, reveals, then holds the finished frame for the rest of a 14-second cycle
+turn, reveals, then holds the finished frame for the rest of a 6-second cycle
 (`panels.CYCLE`) before repeating.
 
 ## Previewing
