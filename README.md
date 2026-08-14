@@ -52,8 +52,12 @@
 ### 📊 GitHub stats
 
 <p align="center">
-  <img height="165" src="https://github-readme-stats.vercel.app/api?username=efekaravul&show_icons=true&hide_border=true&theme=default" alt="GitHub stats">
-  <img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=efekaravul&layout=compact&hide_border=true&theme=default" alt="Top languages">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=efekaravul&theme=default" alt="Profile summary">
+</p>
+
+<p align="center">
+  <img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=efekaravul&theme=default" alt="Stats">
+  <img height="200" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=efekaravul&theme=default" alt="Most commit language">
 </p>
 
 ---
