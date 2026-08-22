@@ -1,0 +1,51 @@
+name: Vardiya uygulamasını yayınla
+
+on:
+  push:
+    branches: [main]
+    paths: ["vardiya/**", ".github/workflows/vardiya-yayin.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  kur:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: vardiya/package-lock.json
+      - run: npm ci
+        working-directory: vardiya
+      - run: npm test
+        working-directory: vardiya
+      - run: npm run build
+        working-directory: vardiya
+        env:
+          # Depo → Settings → Secrets and variables → Actions
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_MAGAZA: ${{ vars.VITE_MAGAZA }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: vardiya/dist
+
+  yayinla:
+    needs: kur
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - id: pages
+        uses: actions/deploy-pages@v4

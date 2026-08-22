@@ -1,0 +1,35 @@
+:root { color-scheme: light; }
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  color: #0A0A0A;
+  background: #FFFFFF;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;             /* tablolar kendi içinde kayar */
+}
+input, textarea, select, button { font: inherit; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid currentColor; outline-offset: 2px;
+}
+.anim { transition: background 120ms ease; }
+@media (prefers-reduced-motion: reduce) { .anim { transition: none; } }
+
+/* küçük yardımcı sınıflar — projede kullanılanlarla sınırlı */
+.flex { display: flex; }
+.wrap { flex-wrap: wrap; }
+.col { flex-direction: column; }
+.ac { align-items: center; }
+.ab { align-items: baseline; }
+.at { align-items: flex-start; }
+.jc { justify-content: center; }
+.jb { justify-content: space-between; }
+.f1 { flex: 1; min-width: 0; }
+.w100 { width: 100%; }
+.orta { max-width: 980px; margin: 0 auto; }
+.dar { max-width: 460px; margin: 0 auto; }
+.merkez { text-align: center; }
+.kaydir { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.yapisik { position: sticky; left: 0; }
+.liste { list-style: none; margin: 0; padding: 0; }

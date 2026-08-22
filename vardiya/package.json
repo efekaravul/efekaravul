@@ -1,0 +1,21 @@
+{
+  "name": "vardiya",
+  "private": true,
+  "version": "0.2.0",
+  "type": "module",
+  "description": "3425 IST-Nisantasi kasa vardiya talep ve planlama uygulamasi",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test src/lib/*.test.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
