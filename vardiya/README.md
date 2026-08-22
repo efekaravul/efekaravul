@@ -1,16 +1,18 @@
 # Vardiya · 3425 IST-Nişantaşı · Kasa
 
-Kasa ekibinin izin/ders taleplerini toplayan ve şefin aylık planı yazmasını
-sağlayan telefon-öncelikli web uygulaması. App Store / Play Store yok:
-**tek bir link**, telefonda "Ana Ekrana Ekle" ile ikon gibi durur.
+Kasa ekibinin bir sonraki ay için **vardiya isteklerini toplayan** telefon
+uygulaması. Planı yazmaz — istekleri toplar, eksikleri kontrol eder ve şefe
+derli toplu gösterir. App Store / Play Store yok: **tek bir link**, telefonda
+"Ana Ekrana Ekle" ile ikon gibi durur.
 
 ```
 çalışan                              şef
 ──────────────────────────────       ──────────────────────────────
-gün gün talep (izin/ders/saat)  ──▶  talepler + izin onayı
-haftalık müsaitlik              ──▶  müsaitlik ızgarası
+gün gün istek (izin/ders/saat)  ──▶  günlere göre talep listesi
+haftalık müsaitlik              ──▶  müsaitlik ızgarası + ay matrisi
 ders programı fotoğrafı         ──▶  yalnızca şefe açık
-vardiyalarım (yayınlanınca)     ◀──  plan · otomatik doldurma · kontrol
+                                ──▶  kim gönderdi / kim göndermedi
+izin kararını görür             ◀──  izin talebine onay / ret
 ```
 
 ## Herkes telefonundan nasıl girecek?
@@ -28,6 +30,16 @@ vardiyalarım (yayınlanınca)     ◀──  plan · otomatik doldurma · kontr
 
 Uygulama kabuğu servis çalışanıyla önbelleğe alınır: mağazada internet
 zayıfken de açılır, kayıt için bağlantı gerekir.
+
+## Ekranlar
+
+**Çalışan** · Günler (gün gün istek + neden) · Haftalık müsaitlik (ders
+programına göre sabit) · Ders programı (fotoğraf/PDF). Yazdıkça taslak olarak
+kaydedilir; "Şefe gönder" ancak eksik yoksa aktif olur.
+
+**Şef** · Talepler (güne göre sıralı, izin taleplerine onay/ret) · Kim
+gönderdi (bekleyenler üstte) · Ay matrisi (kim hangi gün çalışamıyor) ·
+Müsaitlik ızgarası · Kalıplar (referans) · Ayarlar (yönetici kodu).
 
 ## Kurulum
 
@@ -49,7 +61,7 @@ ister. Anahtar tarayıcıya gitse bile kimse doğrudan tablo okuyamaz.
 cp .env.ornek .env      # Supabase bilgilerini yaz
 npm install
 npm run dev             # http://localhost:5173
-npm test                # iş kurallarının testleri
+npm test                # form kurallarının testleri
 ```
 
 `.env` yoksa uygulama **demo modunda** açılır: veriler yalnızca o tarayıcıda
@@ -65,31 +77,26 @@ testleri koşar, derler ve Pages'e atar. Bir kereye mahsus:
   - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (secret)
   - `VITE_MAGAZA` (variable, isteğe bağlı)
 
-## İş kuralları (`src/lib/kurallar.js`)
+## Form kuralları (`src/lib/kurallar.js`)
 
-| Kural | Değer | Nerede |
-|---|---|---|
-| Aylık izin hakkı | 4 gün | çalışan formu uyarır, şef kota aşımını görür |
-| Açılışta en az | 2 kişi | plan kapsaması |
-| Kapanışta en az | 5 kişi | plan kapsaması |
-| Gün içi hedef | 8 kişi | otomatik doldurma |
-| Haftalık tavan | 45 saat | otomatik doldurma + kontrol |
-| Üst üste en fazla | 6 gün | otomatik doldurma + kontrol |
-| Mola | ≤5,5s → 30 dk · ≤9s → 1s · >9s → iki mola | ödenen saat hesabı |
+| Kural | Davranış |
+|---|---|
+| Aylık izin hakkı 4 gün | çalışan uyarılır, şef "kota aşan" sayacında görür |
+| Hafta sonu izni | neden yazılmadan gönderilemez |
+| Saat kısıtı | en az bir saat seçilmeli; en erken < en geç olmalı |
+| Ders / haftalık kısıt | ders programı yüklenmeden gönderilemez |
+| İzin reddedilirse | o gün matriste tekrar "çalışabilir" görünür |
 
-Vardiya kalıpları (`VARDIYALAR`) Ağustos export'undaki gerçek saatlerden
-çıkarıldı: açılış 07:00/08:00/09:00, ara 11:00–12:00, kapanış 21:30.
-
-**Katı** çakışma (izin, ders, saat kısıtı, haftalık kapalı) planda kırmızı
-uyarı verir; **yumuşak** çakışma yalnızca tercihe ters demektir. Şef gerekirse
-katı çakışmaya rağmen yazabilir — engellenmez, işaretlenir.
+Kalıplar sekmesindeki vardiya saatleri ve mola kuralı Ağustos export'undan
+alınmış referans bilgisidir; uygulama bunlarla hesap yapmaz, çalışan saat
+kısıtını neye göre yazacağını bilsin diye durur.
 
 ## Dosya düzeni
 
 ```
 db/                 Supabase şeması + kadro tohumu
-src/data/           mağaza sabitleri, vardiya kalıpları, kurallar
-src/lib/            tarih, iş kuralları (+test), sunucu ve demo veri katmanı
+src/data/           mağaza sabitleri, talep tipleri, kalıplar
+src/lib/            tarih, form kuralları (+test), sunucu ve demo veri katmanı
 src/ekranlar/       Giriş · Çalışan · Yönetici
 src/parcalar/       ortak arayüz parçaları
 scripts/ikon.py     ana ekran ikonları

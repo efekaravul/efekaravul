@@ -65,10 +65,6 @@ export const sunucuApi = {
       p_token: token, p_personel: personelId, p_gun: gun,
       p_durum: durum, p_not: not || "",
     }),
-  planKaydet: (token, atamalar) =>
-    rpc("plan_kaydet", { p_token: token, p_atamalar: atamalar }),
-  planYayinla: (token, ay, yayinda) =>
-    rpc("plan_yayinla", { p_token: token, p_ay: ay, p_yayinda: !!yayinda }),
   sefKoduDegistir: (token, yeni) =>
     rpc("sef_kodu_degistir", { p_token: token, p_yeni: yeni }),
 };

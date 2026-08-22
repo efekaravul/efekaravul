@@ -1,7 +1,10 @@
-/* ====================== mağaza sabitleri ve iş kuralları ==================== */
+/* ====================== mağaza sabitleri ve form kuralları ==================
+   Bu uygulama vardiya YAZMAZ; çalışanlardan gelen istekleri toplar ve şefe
+   derli toplu gösterir. Planlama mağazanın kendi sisteminde yapılır.      */
+
 /* 3425 IST-Nişantaşı · kasa kadrosu (20.08.2026 export'u).
    Sunucuya bağlanılamadığında ve demo modunda bu liste kullanılır;
-   bağlıyken kadro `kadro()` çağrısından gelir.                              */
+   bağlıyken kadro `kadro()` çağrısından gelir.                            */
 export const KASA = [
   "Arda Eren Dil", "Ayşe Yılmaz", "Berkant Polat", "Betül Erdoğan", "Burcu Özmen",
   "Dilara Sarı", "Eda Serbes", "Efe Aldemir", "Efe Karavul", "Elif Aksu",
@@ -24,32 +27,21 @@ export const SAATLER = [
   "21:00","21:30",
 ];
 
-export const MAGAZA = { acilis: "07:00", kapanis: "21:30" };
-
-/* Ağustos export'larındaki kasa vardiyalarından çıkarılan kalıplar. */
-export const VARDIYALAR = [
-  { id: "A1", grup: "Açılış",  bas: "07:00", bit: "16:00" },
-  { id: "A2", grup: "Açılış",  bas: "08:00", bit: "17:00" },
-  { id: "A3", grup: "Açılış",  bas: "09:00", bit: "18:00" },
-  { id: "O1", grup: "Ara",     bas: "11:00", bit: "18:00" },
-  { id: "O2", grup: "Ara",     bas: "11:00", bit: "19:00" },
-  { id: "O3", grup: "Ara",     bas: "12:00", bit: "18:00" },
-  { id: "K1", grup: "Kapanış", bas: "14:00", bit: "21:30" },
-  { id: "K2", grup: "Kapanış", bas: "15:00", bit: "21:30" },
-  { id: "K3", grup: "Kapanış", bas: "16:00", bit: "21:30" },
-  { id: "U1", grup: "Uzun",    bas: "10:30", bit: "21:30" },
-  { id: "U2", grup: "Uzun",    bas: "11:00", bit: "21:30" },
-  { id: "U3", grup: "Uzun",    bas: "12:00", bit: "21:30" },
+/* Ağustos export'larındaki kasa vardiyalarından çıkan kalıplar — çalışan
+   saat kısıtı yazarken neye göre yazdığını bilsin diye referans.          */
+export const KALIPLAR = [
+  { grup: "Açılış",  ornek: "07:00–16:00 · 08:00–17:00 · 09:00–18:00", saat: "7–8s" },
+  { grup: "Ara",     ornek: "11:00–18:00 · 11:00–19:00 · 12:00–18:00", saat: "5–7s" },
+  { grup: "Kapanış", ornek: "16:00–21:30 · 15:00–21:30 · 14:00–21:30", saat: "4,5–6,5s" },
+  { grup: "Uzun",    ornek: "12:00–21:30 · 11:00–21:30 · 10:30–21:30", saat: "7,5–9s" },
 ];
-export const VARDIYA = Object.fromEntries(VARDIYALAR.map((v) => [v.id, v]));
-export const GRUPLAR = ["Açılış", "Ara", "Kapanış", "Uzun"];
 
 export const TALEP_TIPLERI = [
-  { id: "izin",    label: "Tüm gün izin",  kod: "İZİN", katı: true },
-  { id: "ders",    label: "Ders var",      kod: "DERS", katı: true },
-  { id: "saat",    label: "Saat kısıtı",   kod: "SAAT", katı: true },
-  { id: "acilis",  label: "Açılış isterim", kod: "AÇ",  katı: false },
-  { id: "kapanis", label: "Kapanış isterim", kod: "KAP", katı: false },
+  { id: "izin",    label: "Tüm gün izin",    kod: "İZİN", katı: true },
+  { id: "ders",    label: "Ders var",        kod: "DERS", katı: true },
+  { id: "saat",    label: "Saat kısıtı",     kod: "SAAT", katı: true },
+  { id: "acilis",  label: "Açılış isterim",  kod: "AÇ",   katı: false },
+  { id: "kapanis", label: "Kapanış isterim", kod: "KAP",  katı: false },
 ];
 export const TIP = Object.fromEntries(TALEP_TIPLERI.map((t) => [t.id, t]));
 export const tipBilgi = (id) =>
@@ -67,11 +59,5 @@ export const AYLAR = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz"
 export const GUNLER = ["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
 export const HAFTA = [1, 2, 3, 4, 5, 6, 0]; // Pzt → Paz
 
-/* ------------------------------- kurallar --------------------------------- */
-export const IZIN_KOTA = 4;          // kişi başı aylık izin hakkı
-export const ACILIS_MIN = 2;         // sabah kasayı açacak en az kişi
-export const KAPANIS_MIN = 5;        // kapanışa kalacak en az kişi
-export const GUNLUK_MIN = 8;         // gün içi toplam kasa personeli
-export const HAFTALIK_MAX_SAAT = 45; // haftalık ödenen saat tavanı
-export const ARDISIK_MAX_GUN = 6;    // üst üste en fazla çalışılan gün
+export const IZIN_KOTA = 4;               // kişi başı aylık izin hakkı
 export const MAX_DOSYA = 4 * 1024 * 1024; // seçilebilecek ham dosya (küçültülür)

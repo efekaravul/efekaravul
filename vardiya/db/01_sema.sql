@@ -64,28 +64,12 @@ create table if not exists program (
   tarih       timestamptz not null default now()
 );
 
--- Şefin yazdığı vardiya planı
-create table if not exists plan (
-  gun         date not null,
-  personel_id text not null references personel(id) on delete cascade,
-  vardiya     text not null,                    -- VARDIYALAR[].id
-  primary key (gun, personel_id)
-);
-
-create table if not exists plan_yayin (
-  ay     text primary key,
-  tarih  timestamptz not null default now(),
-  veren  text references personel(id)
-);
-
 alter table personel   enable row level security;
 alter table ayar       enable row level security;
 alter table oturum     enable row level security;
 alter table talep      enable row level security;
 alter table karar      enable row level security;
 alter table program    enable row level security;
-alter table plan       enable row level security;
-alter table plan_yayin enable row level security;
 -- Politika tanımlanmadı: doğrudan tablo erişimi herkese kapalı.
 
 -- ------------------------------ yardımcılar --------------------------
@@ -187,12 +171,7 @@ begin
     'kararlar',coalesce((select jsonb_object_agg(x.gun::text,
                                  jsonb_build_object('durum', x.durum, 'not', x.not_metni))
                            from karar x where x.personel_id = k.id
-                            and to_char(x.gun,'YYYY-MM') = p_ay), '{}'::jsonb),
-    'plan',    case when exists (select 1 from plan_yayin y where y.ay = p_ay)
-                    then coalesce((select jsonb_object_agg(pl.gun::text, pl.vardiya)
-                                     from plan pl where pl.personel_id = k.id
-                                      and to_char(pl.gun,'YYYY-MM') = p_ay), '{}'::jsonb)
-                    else 'null'::jsonb end
+                            and to_char(x.gun,'YYYY-MM') = p_ay), '{}'::jsonb)
   ) into sonuc;
   return sonuc;
 end $$;
@@ -266,11 +245,7 @@ begin
                      from program g),
     'kararlar', (select coalesce(jsonb_object_agg(x.personel_id || '|' || x.gun::text,
                           jsonb_build_object('durum', x.durum, 'not', x.not_metni)), '{}'::jsonb)
-                   from karar x where to_char(x.gun,'YYYY-MM') = p_ay),
-    'plan', (select coalesce(jsonb_object_agg(pl.gun::text || '|' || pl.personel_id, pl.vardiya),
-                    '{}'::jsonb)
-               from plan pl where to_char(pl.gun,'YYYY-MM') = p_ay),
-    'yayin', coalesce((select to_jsonb(y.tarih) from plan_yayin y where y.ay = p_ay), 'null'::jsonb)
+                   from karar x where to_char(x.gun,'YYYY-MM') = p_ay)
   ) into sonuc;
   return sonuc;
 end $$;
@@ -292,37 +267,6 @@ begin
   end if;
 end $$;
 
--- p_atamalar: { "2026-09-05|efe-karavul": "K2", "2026-09-06|efe-karavul": null, ... }
-create or replace function plan_kaydet(p_token text, p_atamalar jsonb)
-returns void language plpgsql security definer set search_path = public as $$
-declare anahtar text; deger text; g date; kim text;
-begin
-  perform _sef(p_token);
-  for anahtar, deger in select * from jsonb_each_text(p_atamalar) loop
-    g   := split_part(anahtar, '|', 1)::date;
-    kim := split_part(anahtar, '|', 2);
-    if deger is null or deger = '' then
-      delete from plan where gun = g and personel_id = kim;
-    else
-      insert into plan(gun, personel_id, vardiya) values (g, kim, deger)
-      on conflict (gun, personel_id) do update set vardiya = excluded.vardiya;
-    end if;
-  end loop;
-end $$;
-
-create or replace function plan_yayinla(p_token text, p_ay text, p_yayinda boolean)
-returns void language plpgsql security definer set search_path = public as $$
-declare k personel;
-begin
-  k := _sef(p_token);
-  if p_yayinda then
-    insert into plan_yayin(ay, tarih, veren) values (p_ay, now(), k.id)
-    on conflict (ay) do update set tarih = now(), veren = k.id;
-  else
-    delete from plan_yayin where ay = p_ay;
-  end if;
-end $$;
-
 -- ------------------------------- yetkiler ----------------------------
 revoke all on all tables in schema public from anon, authenticated;
 revoke all on all functions in schema public from anon, authenticated;
@@ -339,5 +283,3 @@ grant execute on function program_sil(text)                            to anon;
 grant execute on function program_ac(text,text)                        to anon;
 grant execute on function sef_ayi(text,text)                           to anon;
 grant execute on function karar_ver(text,text,date,text,text)          to anon;
-grant execute on function plan_kaydet(text,jsonb)                      to anon;
-grant execute on function plan_yayinla(text,text,boolean)              to anon;

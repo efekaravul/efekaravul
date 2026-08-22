@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { C, SERIF, label, num } from "../tokens.js";
+import { C, label, num } from "../tokens.js";
 import {
-  TALEP_TIPLERI, MUSAITLIK, SAATLER, GUNLER, HAFTA, IZIN_KOTA,
-  VARDIYA, MAX_DOSYA, tipBilgi,
+  TALEP_TIPLERI, MUSAITLIK, SAATLER, GUNLER, HAFTA, IZIN_KOTA, MAX_DOSYA, tipBilgi,
 } from "../data/sabitler.js";
-import { iso, haftaSonu, sure } from "../lib/tarih.js";
-import { formDurumu, vardiyaSure } from "../lib/kurallar.js";
+import { iso, haftaSonu } from "../lib/tarih.js";
+import { formDurumu } from "../lib/kurallar.js";
 import { hazirla } from "../lib/dosya.js";
 import {
   Sayac, Sekmeler, Rozet, Uyari, Dugme, SaatSecici, ProgramGoruntule, dokun,
@@ -96,7 +95,6 @@ export default function Calisan({
         { id: "gunler", t: "Günler" },
         { id: "hafta", t: "Haftalık müsaitlik" },
         { id: "program", t: "Ders programı" },
-        { id: "vardiyam", t: "Vardiyam" },
       ]} />
 
       {sekme === "gunler" && (
@@ -269,10 +267,7 @@ export default function Calisan({
         </div>
       )}
 
-      {sekme === "vardiyam" && <Vardiyam days={days} plan={paket.plan} />}
-
-      {sekme !== "vardiyam" && (
-        <div style={{ padding: "24px 20px calc(28px + env(safe-area-inset-bottom))" }}>
+      <div style={{ padding: "24px 20px calc(28px + env(safe-area-inset-bottom))" }}>
           {kontrol.eksikler.map((m) => <Uyari key={m}>{m}</Uyari>)}
           {programEksik && <Uyari>Ders / saat kısıtı işaretledin, ders programını yükle.</Uyari>}
           {kontrol.izin > IZIN_KOTA && (
@@ -289,51 +284,8 @@ export default function Calisan({
               : durum === "kaydedildi" ? "Taslak kaydedildi"
               : durum || "Değişiklikler otomatik kaydedilir"}
           </p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
 
-function Vardiyam({ days, plan }) {
-  if (!plan) {
-    return (
-      <div className="merkez" style={{ padding: "64px 20px" }}>
-        <p style={{ fontFamily: SERIF, fontSize: 20 }}>Plan henüz yayınlanmadı</p>
-        <p style={{ ...label, marginTop: 8 }}>Şef yayınlayınca vardiyaların burada görünür</p>
-      </div>
-    );
-  }
-  const satirlar = days.map((d) => ({ d, vid: plan[iso(d)] }));
-  const toplam = satirlar.reduce((a, s) => a + (s.vid ? vardiyaSure(s.vid).odenen : 0), 0);
-  const calisma = satirlar.filter((s) => s.vid).length;
-
-  return (
-    <div style={{ marginTop: 16 }}>
-      <div className="flex" style={{ gap: 26, padding: "0 20px 16px" }}>
-        <Sayac deger={calisma} etiket="Çalışma günü" />
-        <Sayac deger={sure(toplam)} etiket="Ödenen saat" />
-        <Sayac deger={days.length - calisma} etiket="İzin günü" />
-      </div>
-      <ul className="liste">
-        {satirlar.map(({ d, vid }) => {
-          const v = vid ? VARDIYA[vid] : null;
-          return (
-            <li key={iso(d)} className="flex ac" style={{ gap: 12, padding: "12px 20px",
-              borderTop: `1px solid ${C.rule}`, background: v ? C.paper : C.wash }}>
-              <span style={{ ...num, fontSize: 17, width: 26,
-                             color: haftaSonu(d) ? C.alarm : C.ink }}>
-                {String(d.getDate()).padStart(2, "0")}
-              </span>
-              <span style={{ ...label, width: 32 }}>{GUNLER[d.getDay()]}</span>
-              <span className="f1" style={{ ...num, fontSize: 15 }}>
-                {v ? `${v.bas} – ${v.bit}` : <span style={{ ...label }}>İzinli</span>}
-              </span>
-              {v && <span style={{ ...label, color: C.ink }}>{sure(vardiyaSure(vid).odenen)}</span>}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}

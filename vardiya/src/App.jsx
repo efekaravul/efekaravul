@@ -68,10 +68,8 @@ export default function App() {
     if (!paket || yukleniyor) return <Yukleniyor />;
     if (oturum.rol === "yonetici") {
       return (
-        <Yonetici token={oturum.token} ay={anahtar} days={days} paket={paket}
+        <Yonetici token={oturum.token} days={days} paket={paket}
           kararVer={(pid, gun, durum, not) => api.kararVer(oturum.token, pid, gun, durum, not)}
-          planKaydet={(atamalar) => api.planKaydet(oturum.token, atamalar)}
-          planYayinla={(a, yayinda) => api.planYayinla(oturum.token, a, yayinda)}
           sefKoduDegistir={(yeni) => api.sefKoduDegistir(oturum.token, yeni)} />
       );
     }

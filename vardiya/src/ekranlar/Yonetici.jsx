@@ -1,25 +1,12 @@
 import React, { useMemo, useState } from "react";
 import { C, SERIF, label, num, meta } from "../tokens.js";
-import {
-  VARDIYALAR, VARDIYA, GRUPLAR, GUNLER, HAFTA, IZIN_KOTA,
-  ACILIS_MIN, KAPANIS_MIN, GUNLUK_MIN, tipBilgi,
-} from "../data/sabitler.js";
-import { iso, sure, haftaSonu } from "../lib/tarih.js";
-import {
-  gunDurumu, cakismalar, katiCakisma, gunKapsama, kisiToplam,
-  otomatikDoldur, planUyarilari, vardiyaSure, talepOzet, gunKapali,
-} from "../lib/kurallar.js";
-import {
-  Sayac, Sekmeler, Rozet, Uyari, Dugme, ProgramGoruntule, dokun,
-} from "../parcalar/ortak.jsx";
+import { GUNLER, HAFTA, IZIN_KOTA, KALIPLAR, tipBilgi } from "../data/sabitler.js";
+import { iso } from "../lib/tarih.js";
+import { gunDurumu, gunKapali, musaitlik, talepOzet } from "../lib/kurallar.js";
+import { Sayac, Sekmeler, Rozet, Dugme, ProgramGoruntule, dokun } from "../parcalar/ortak.jsx";
 
-export default function Yonetici({
-  token, ay, days, paket, kararVer, planKaydet, planYayinla, sefKoduDegistir,
-}) {
-  const [sekme, setSekme] = useState("plan");
-  const [plan, setPlan] = useState(paket.plan || {});
-  const [yayin, setYayin] = useState(paket.yayin || null);
-  const [isaret, setIsaret] = useState("");
+export default function Yonetici({ token, days, paket, kararVer, sefKoduDegistir }) {
+  const [sekme, setSekme] = useState("talepler");
 
   const kadro = useMemo(
     () => (paket.kadro || []).filter((p) => p.rol !== "yonetici"),
@@ -46,194 +33,55 @@ export default function Yonetici({
     return out;
   }, [kadro, paket]);
 
-  const planYaz = async (yeni, mesaj) => {
-    const fark = {};
-    const anahtarlar = new Set([...Object.keys(plan), ...Object.keys(yeni)]);
-    for (const a of anahtarlar) if (plan[a] !== yeni[a]) fark[a] = yeni[a] || null;
-    setPlan(yeni);
-    if (!Object.keys(fark).length) return;
-    setIsaret("kaydediliyor…");
-    try { await planKaydet(fark); setIsaret(mesaj || "kaydedildi"); }
-    catch (e) { setIsaret(e.message || "kaydedilemedi"); }
-  };
+  const gunSet = useMemo(() => new Set(days.map(iso)), [days]);
 
-  const gonderen = kadro.filter((p) => kayitlar[p.id].gonderim).length;
-  const uyarilar = useMemo(
-    () => planUyarilari(days, kadro, kayitlar, plan),
-    [days, kadro, kayitlar, plan]
-  );
-  const katiUyari = uyarilar.filter((u) => u.seviye === "katı").length;
+  const sayilar = useMemo(() => {
+    let gonderen = 0, izin = 0, kotaAsan = 0;
+    for (const p of kadro) {
+      const k = kayitlar[p.id];
+      if (k.gonderim) gonderen += 1;
+      const kisiIzin = Object.entries(k.veri.gunler || {})
+        .filter(([g, v]) => v.tip === "izin" && gunSet.has(g)).length;
+      izin += kisiIzin;
+      if (kisiIzin > IZIN_KOTA) kotaAsan += 1;
+    }
+    return { gonderen, izin, kotaAsan };
+  }, [kadro, kayitlar, gunSet]);
 
   return (
     <div>
-      <div className="flex" style={{ gap: 22, padding: "18px 20px",
+      <div className="flex" style={{ gap: 24, padding: "18px 20px",
         borderBottom: `1px solid ${C.rule}` }}>
-        <Sayac deger={`${gonderen}/${kadro.length}`} etiket="Gönderen" />
-        <Sayac deger={katiUyari} etiket="Plan ihlali" uyar={katiUyari > 0} />
-        <Sayac deger={yayin ? "Açık" : "Kapalı"} etiket="Yayın" />
+        <Sayac deger={`${sayilar.gonderen}/${kadro.length}`} etiket="Gönderen" />
+        <Sayac deger={sayilar.izin} etiket="İzin talebi" />
+        <Sayac deger={sayilar.kotaAsan} etiket="Kota aşan" uyar={sayilar.kotaAsan > 0} />
       </div>
 
       <Sekmeler aktif={sekme} setAktif={setSekme} liste={[
-        { id: "plan", t: "Plan" },
         { id: "talepler", t: "Talepler" },
+        { id: "kimler", t: "Kim gönderdi" },
         { id: "matris", t: "Ay matrisi" },
         { id: "hafta", t: "Müsaitlik" },
-        { id: "kontrol", t: "Kontrol" },
+        { id: "kalip", t: "Kalıplar" },
         { id: "ayar", t: "Ayarlar" },
       ]} />
 
-      {sekme === "plan" && (
-        <PlanEkrani days={days} kadro={kadro} kayitlar={kayitlar} plan={plan}
-          planYaz={planYaz} isaret={isaret} yayin={yayin}
-          yayinla={async (a) => {
-            setIsaret(a ? "yayınlanıyor…" : "yayın kapatılıyor…");
-            try { await planYayinla(ay, a); setYayin(a ? Date.now() : null); setIsaret(a ? "yayınlandı" : "yayın kapalı"); }
-            catch (e) { setIsaret(e.message); }
-          }} />
-      )}
       {sekme === "talepler" && (
-        <Talepler token={token} days={days} kadro={kadro} kayitlar={kayitlar} kararVer={kararVer} />
+        <Talepler token={token} days={days} kadro={kadro} kayitlar={kayitlar}
+                  gunSet={gunSet} kararVer={kararVer} />
       )}
-      {sekme === "matris" && <Matris days={days} kadro={kadro} kayitlar={kayitlar} plan={plan} />}
+      {sekme === "kimler" && <Kimler kadro={kadro} kayitlar={kayitlar} gunSet={gunSet} />}
+      {sekme === "matris" && <Matris days={days} kadro={kadro} kayitlar={kayitlar} />}
       {sekme === "hafta" && <HaftaIzgara kadro={kadro} kayitlar={kayitlar} />}
-      {sekme === "kontrol" && <Kontrol uyarilar={uyarilar} days={days} kadro={kadro} plan={plan} />}
+      {sekme === "kalip" && <Kaliplar />}
       {sekme === "ayar" && <Ayarlar sefKoduDegistir={sefKoduDegistir} />}
     </div>
   );
 }
 
-/* --------------------------------- plan ----------------------------------- */
-function PlanEkrani({ days, kadro, kayitlar, plan, planYaz, isaret, yayin, yayinla }) {
-  const bugun = iso(new Date());
-  const [gunKey, setGunKey] = useState(
-    () => (days.some((d) => iso(d) === bugun) ? bugun : iso(days[0]))
-  );
-  const kapsama = gunKapsama(plan, gunKey);
-  const gun = days.find((d) => iso(d) === gunKey) || days[0];
-
-  const sirali = useMemo(() => {
-    return [...kadro].sort((a, b) => {
-      const av = plan[`${gunKey}|${a.id}`] ? 0 : 1;
-      const bv = plan[`${gunKey}|${b.id}`] ? 0 : 1;
-      if (av !== bv) return av - bv;
-      return a.ad.localeCompare(b.ad, "tr");
-    });
-  }, [kadro, plan, gunKey]);
-
-  const gunuDoldur = () =>
-    planYaz(otomatikDoldur({ days: [gun], kadro, kayitlar, plan }), "gün dolduruldu");
-  const ayiDoldur = () =>
-    planYaz(otomatikDoldur({ days, kadro, kayitlar, plan }), "ay dolduruldu");
-  const gunuBosalt = () => {
-    const yeni = { ...plan };
-    kadro.forEach((p) => delete yeni[`${gunKey}|${p.id}`]);
-    planYaz(yeni, "gün boşaltıldı");
-  };
-
-  return (
-    <div>
-      <div className="kaydir" style={{ borderBottom: `1px solid ${C.rule}`, marginTop: 12 }}>
-        <div className="flex" style={{ padding: "0 12px 10px", gap: 6 }}>
-          {days.map((d) => {
-            const k = iso(d);
-            const s = k === gunKey;
-            const kap = gunKapsama(plan, k);
-            return (
-              <button key={k} onClick={() => setGunKey(k)}
-                style={{ ...dokun, minWidth: 46, padding: "8px 4px", cursor: "pointer",
-                  border: `1px solid ${s ? C.ink : C.rule}`, background: s ? C.ink : C.paper,
-                  color: s ? C.paper : haftaSonu(d) ? C.alarm : C.ink }}>
-                <div style={{ ...num, fontSize: 15 }}>{String(d.getDate()).padStart(2, "0")}</div>
-                <div style={{ fontSize: 9, opacity: 0.7 }}>{GUNLER[d.getDay()]}</div>
-                <div style={{ height: 4, marginTop: 4,
-                  background: kap.sorunlu ? C.alarm : s ? C.paper : C.ink,
-                  opacity: kap.kisi ? 1 : 0.15 }} />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex" style={{ gap: 20, padding: "16px 20px" }}>
-        <Sayac deger={`${kapsama.kisi}/${GUNLUK_MIN}`} etiket="Kişi" uyar={!!kapsama.eksikKisi} />
-        <Sayac deger={`${kapsama.acilis}/${ACILIS_MIN}`} etiket="Açılış" uyar={!!kapsama.eksikAcilis} />
-        <Sayac deger={`${kapsama.kapanis}/${KAPANIS_MIN}`} etiket="Kapanış" uyar={!!kapsama.eksikKapanis} />
-        <Sayac deger={sure(kapsama.odenen)} etiket="Ödenen" />
-      </div>
-
-      <div className="flex" style={{ gap: 8, padding: "0 20px 8px" }}>
-        <Dugme onClick={gunuDoldur}>Günü doldur</Dugme>
-        <Dugme onClick={ayiDoldur}>Ayı doldur</Dugme>
-        <Dugme onClick={gunuBosalt}>Boşalt</Dugme>
-      </div>
-      <p style={{ ...label, padding: "0 20px 12px" }}>{isaret || "Değişiklikler anında kaydedilir"}</p>
-
-      <ul className="liste">
-        {sirali.map((p) => {
-          const vid = plan[`${gunKey}|${p.id}`] || "";
-          const durum = gunDurumu(kayitlar[p.id], gunKey);
-          const kapali = gunKapali(durum);
-          const cak = vid ? cakismalar(durum, vid) : [];
-          const t = kisiToplam(plan, p.id, days);
-          const talep = durum.talep;
-          return (
-            <li key={p.id} style={{ borderTop: `1px solid ${C.rule}`, padding: "12px 20px",
-              background: kapali && !vid ? C.wash : C.paper }}>
-              <div className="flex ac" style={{ gap: 10 }}>
-                <div className="f1">
-                  <div style={{ fontSize: 15 }}>{p.ad}</div>
-                  <div style={{ ...meta, marginTop: 4 }}>
-                    {t.gun} gün · {sure(t.odenen)}
-                    {talep ? ` · ${talepOzet(talep)}` : ""}
-                    {durum.hafta.mod === "yok" ? " · haftalık kapalı" : ""}
-                  </div>
-                </div>
-                <select value={vid} onChange={(e) => planYaz(
-                    { ...plan, [`${gunKey}|${p.id}`]: e.target.value || undefined }, "kaydedildi")}
-                  style={{ ...dokun, ...num, width: 148, padding: "8px 6px", borderRadius: 0, fontSize: 14,
-                    border: `1px solid ${cak.some((c) => c.seviye === "katı") ? C.alarm : C.ink}`,
-                    background: vid ? C.ink : C.paper, color: vid ? C.paper : C.ink }}>
-                  <option value="">— izinli —</option>
-                  {GRUPLAR.map((g) => (
-                    <optgroup key={g} label={g}>
-                      {VARDIYALAR.filter((v) => v.grup === g).map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {katiCakisma(durum, v.id) ? "⚠ " : ""}{v.bas}–{v.bit}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </div>
-              {cak.length > 0 && (
-                <p style={{ fontSize: 12.5, marginTop: 8, lineHeight: 1.5,
-                  color: cak.some((c) => c.seviye === "katı") ? C.alarm : C.muted }}>
-                  {cak.map((c) => c.metin).join(" · ")}
-                </p>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      <div style={{ padding: "24px 20px calc(28px + env(safe-area-inset-bottom))" }}>
-        <Dugme birincil sonuc={!!yayin} onClick={() => yayinla(!yayin)}>
-          {yayin ? "Yayında · kapat" : "Planı yayınla"}
-        </Dugme>
-        <p style={{ ...label, textAlign: "center", marginTop: 12, lineHeight: 1.8 }}>
-          {yayin
-            ? "Herkes kendi vardiyalarını görüyor"
-            : "Yayınlanana kadar planı kimse göremez"}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 /* ------------------------------- talepler --------------------------------- */
-function Talepler({ token, days, kadro, kayitlar, kararVer }) {
+function Talepler({ token, kadro, kayitlar, gunSet, kararVer }) {
   const [kararlar, setKararlar] = useState({});
-  const gunSet = useMemo(() => new Set(days.map(iso)), [days]);
 
   const liste = useMemo(() => {
     const out = [];
@@ -274,8 +122,8 @@ function Talepler({ token, days, kadro, kayitlar, kararVer }) {
         const yeniGun = t.gunKey !== son; son = t.gunKey;
         const tip = tipBilgi(t.talep.tip);
         const karar = kararGoster(t.id, t.gunKey);
-        const izinSayisi = Object.values(t.kayit.veri.gunler || {})
-          .filter((v) => v.tip === "izin").length;
+        const izinSayisi = Object.entries(t.kayit.veri.gunler || {})
+          .filter(([g, v]) => v.tip === "izin" && gunSet.has(g)).length;
         return (
           <React.Fragment key={`${t.id}-${t.gunKey}-${i}`}>
             {yeniGun && (
@@ -293,6 +141,9 @@ function Talepler({ token, days, kadro, kayitlar, kararVer }) {
                     <span style={{ ...label, color: C.alarm, marginLeft: 8 }}>
                       kota aşımı ({izinSayisi})
                     </span>
+                  )}
+                  {!t.kayit.gonderim && (
+                    <span style={{ ...label, marginLeft: 8 }}>taslak</span>
                   )}
                 </div>
                 {t.talep.tip === "saat" && (
@@ -334,8 +185,56 @@ function Talepler({ token, days, kadro, kayitlar, kararVer }) {
   );
 }
 
+/* ------------------------------ kim gönderdi ------------------------------ */
+function Kimler({ kadro, kayitlar, gunSet }) {
+  const satirlar = kadro.map((p) => {
+    const k = kayitlar[p.id];
+    const gunler = Object.entries(k.veri.gunler || {}).filter(([g]) => gunSet.has(g));
+    return {
+      ...p,
+      gonderim: k.gonderim,
+      talep: gunler.length,
+      izin: gunler.filter(([, v]) => v.tip === "izin").length,
+      hafta: Object.values(k.veri.hafta || {}).filter((v) => v.mod && v.mod !== "tam").length,
+      program: !!k.program,
+    };
+  });
+  const bekleyen = satirlar.filter((s) => !s.gonderim);
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      {bekleyen.length > 0 && (
+        <p style={{ ...label, padding: "0 20px 12px", lineHeight: 1.8, color: C.alarm }}>
+          {bekleyen.length} kişi henüz göndermedi
+        </p>
+      )}
+      <ul className="liste">
+        {[...satirlar].sort((a, b) => (a.gonderim ? 1 : 0) - (b.gonderim ? 1 : 0) ||
+                                      a.ad.localeCompare(b.ad, "tr")).map((s) => (
+          <li key={s.id} className="flex ac" style={{ gap: 12, padding: "12px 20px",
+            borderTop: `1px solid ${C.rule}` }}>
+            <div className="f1">
+              <div style={{ fontSize: 15, color: s.gonderim ? C.ink : C.muted }}>{s.ad}</div>
+              <div style={{ ...meta, marginTop: 4 }}>
+                {s.gonderim
+                  ? `${new Date(s.gonderim).toLocaleDateString("tr-TR")} · ${s.talep} gün talebi`
+                  : s.talep || s.hafta ? `taslak · ${s.talep} gün talebi` : "hiç girmedi"}
+                {s.izin ? ` · ${s.izin} izin` : ""}
+                {s.hafta ? ` · ${s.hafta} haftalık kısıt` : ""}
+                {s.program ? " · ders programı var" : ""}
+              </div>
+            </div>
+            <Rozet kod={s.gonderim ? "GELDİ" : "BEKLİYOR"} dolu={!!s.gonderim}
+                   renk={s.gonderim ? C.ok : C.alarm} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 /* ------------------------------- ay matrisi ------------------------------- */
-function Matris({ days, kadro, kayitlar, plan }) {
+function Matris({ days, kadro, kayitlar }) {
   const W = 34, NW = 104;
   const yogunluk = useMemo(() => {
     const m = {};
@@ -350,7 +249,7 @@ function Matris({ days, kadro, kayitlar, plan }) {
   return (
     <div style={{ marginTop: 16 }}>
       <p style={{ ...label, padding: "0 20px 10px", lineHeight: 1.8 }}>
-        Kırmızı çubuk · o gün hiç çalışamayan kişi sayısı
+        Kırmızı çubuk · o gün çalışamayan kişi sayısı
       </p>
       <div className="kaydir" style={{ borderTop: `1px solid ${C.rule}` }}>
         <table style={{ borderCollapse: "collapse", ...num }}>
@@ -393,21 +292,20 @@ function Matris({ days, kadro, kayitlar, plan }) {
                   {days.map((d) => {
                     const gunKey = iso(d);
                     const durum = gunDurumu(k, gunKey);
-                    const vid = plan[`${gunKey}|${p.id}`];
-                    const kati = durum.talep && tipBilgi(durum.talep.tip).katı;
-                    const kapali = gunKapali(durum);
-                    const metin = vid ? VARDIYA[vid].bas.slice(0, 2)
-                                 : durum.talep ? tipBilgi(durum.talep.tip).kod
-                                 : kapali ? "—" : "";
+                    const hal = musaitlik(durum);
+                    const metin = durum.talep ? tipBilgi(durum.talep.tip).kod
+                                : hal === "kapalı" ? "DERS"
+                                : hal === "kısıtlı" ? "~" : "";
                     return (
                       <td key={gunKey}
                         title={durum.talep
                           ? `${tipBilgi(durum.talep.tip).label}${durum.talep.neden ? " — " + durum.talep.neden : ""}`
-                          : kapali ? "Haftalık: müsait değil" : ""}
+                          : hal === "kapalı" ? "Haftalık: müsait değil" : ""}
                         style={{ textAlign: "center", fontSize: 8.5, padding: "6px 1px",
                           borderRight: `1px solid ${C.rule}`, borderBottom: `1px solid ${C.rule}`,
-                          background: vid ? C.ok : kati || kapali ? C.ink : durum.talep ? C.wash : C.paper,
-                          color: vid || kati || kapali ? C.paper : C.ink }}>
+                          background: hal === "kapalı" ? C.ink
+                                    : hal === "acik" ? C.paper : C.wash,
+                          color: hal === "kapalı" ? C.paper : C.ink }}>
                         {metin}
                       </td>
                     );
@@ -419,7 +317,7 @@ function Matris({ days, kadro, kayitlar, plan }) {
         </table>
       </div>
       <p style={{ ...label, padding: "16px 20px", lineHeight: 2 }}>
-        Yeşil · yazılmış vardiyanın başlangıcı &nbsp;·&nbsp; siyah · çalışamaz
+        Siyah · çalışamaz &nbsp;·&nbsp; gri · saat kısıtı veya tercih
         &nbsp;·&nbsp; soluk isim · göndermedi &nbsp;·&nbsp;
         <span style={{ color: C.alarm }}>•</span> ders programı var
       </p>
@@ -483,64 +381,30 @@ function HaftaIzgara({ kadro, kayitlar }) {
   );
 }
 
-/* -------------------------------- kontrol --------------------------------- */
-function Kontrol({ uyarilar, days, kadro, plan }) {
-  const kati = uyarilar.filter((u) => u.seviye === "katı");
-  const yumusak = uyarilar.filter((u) => u.seviye !== "katı");
-  const toplamlar = kadro
-    .map((p) => ({ ...p, ...kisiToplam(plan, p.id, days) }))
-    .sort((a, b) => b.odenen - a.odenen);
-
+/* -------------------------------- kalıplar -------------------------------- */
+function Kaliplar() {
   return (
-    <div style={{ padding: "20px 20px calc(28px + env(safe-area-inset-bottom))" }}>
-      {kati.length === 0 && yumusak.length === 0 ? (
-        <p style={{ fontFamily: SERIF, fontSize: 20 }}>Plan temiz — ihlal yok.</p>
-      ) : (
-        <>
-          {kati.length > 0 && (
-            <>
-              <div style={label}>Düzeltilmeli ({kati.length})</div>
-              {kati.slice(0, 40).map((u, i) => (
-                <Uyari key={i}>{u.gunKey ? `${u.gunKey.slice(8)} · ` : ""}{u.metin}</Uyari>
-              ))}
-              {kati.length > 40 && (
-                <p style={{ ...label, marginTop: 10 }}>… ve {kati.length - 40} tane daha</p>
-              )}
-            </>
-          )}
-          {yumusak.length > 0 && (
-            <div style={{ marginTop: 24 }}>
-              <div style={label}>Tercihe ters ({yumusak.length})</div>
-              {yumusak.slice(0, 20).map((u, i) => (
-                <Uyari key={i} renk={C.muted}>
-                  {u.gunKey ? `${u.gunKey.slice(8)} · ` : ""}{u.metin}
-                </Uyari>
-              ))}
+    <div style={{ padding: "24px 20px 0" }}>
+      <p style={{ fontSize: 15, color: C.muted, lineHeight: 1.6 }}>
+        Ağustos export'larındaki kasa vardiyalarından çıkarılan kalıplar.
+        Talepler bunlara göre değerlendirilir.
+      </p>
+      <ul className="liste" style={{ marginTop: 18 }}>
+        {KALIPLAR.map((k) => (
+          <li key={k.grup} style={{ borderTop: `1px solid ${C.rule}`, padding: "14px 0" }}>
+            <div className="flex ab" style={{ gap: 10 }}>
+              <span style={{ fontFamily: SERIF, fontSize: 18 }}>{k.grup}</span>
+              <span style={label}>{k.saat}</span>
             </div>
-          )}
-        </>
-      )}
-
-      <div style={{ marginTop: 32, borderTop: `1px solid ${C.ink}`, paddingTop: 16 }}>
-        <div style={label}>Ay toplamı · ödenen saat</div>
-        <ul className="liste" style={{ marginTop: 10 }}>
-          {toplamlar.map((t) => (
-            <li key={t.id} className="flex ac jb"
-                style={{ padding: "10px 0", borderTop: `1px solid ${C.rule}` }}>
-              <span style={{ fontSize: 14 }}>{t.ad}</span>
-              <span style={{ ...num, fontSize: 14 }}>
-                {t.gun} gün · {sure(t.odenen)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div style={{ marginTop: 32, borderTop: `1px solid ${C.ink}`, paddingTop: 16 }}>
+            <p style={{ ...num, fontSize: 13, color: C.muted, marginTop: 6 }}>{k.ornek}</p>
+          </li>
+        ))}
+      </ul>
+      <div style={{ borderTop: `1px solid ${C.ink}`, padding: "18px 0 8px" }}>
         <div style={label}>Mola kuralı</div>
         <p style={{ fontSize: 14, lineHeight: 1.7, marginTop: 8 }}>
-          Ödenen saat = mağazada geçen süre − mola. 5,5 saate kadar 30 dk, 9 saate kadar
-          1 saat tek mola; 9 saati aşan planlarda iki mola. Tablodaki süreler bu kurala göre.
+          Ödenen saat = mağazada geçen süre − mola. 5,5 saate kadar 30 dk veya 1 saat
+          tek mola; 9 saati aşan planlarda iki mola veriliyor.
         </p>
       </div>
     </div>

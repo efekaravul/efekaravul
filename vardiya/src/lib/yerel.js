@@ -40,7 +40,7 @@ function tohum() {
         gonderim: null,
       },
     },
-    programlar: {}, icerikler: {}, kararlar: {}, plan: {}, yayin: {},
+    programlar: {}, icerikler: {}, kararlar: {},
   };
   yaz(d);
   return d;
@@ -70,18 +70,11 @@ export const yerelApi = {
       const [pid, gun] = k.split("|");
       if (pid === id && gun.startsWith(ay)) kararlar[gun] = v;
     });
-    const plan = d.yayin[ay]
-      ? Object.entries(d.plan).reduce((acc, [k, v]) => {
-          const [gun, pid] = k.split("|");
-          if (pid === id && gun.startsWith(ay)) acc[gun] = v;
-          return acc;
-        }, {})
-      : null;
     return {
       kisi: { id: kisi.id, ad: kisi.ad, rol: "calisan" },
       talep: d.talepler[`${id}|${ay}`] || null,
       program: d.programlar[id] || null,
-      kararlar, plan,
+      kararlar,
     };
   },
   async talepKaydet(token, ay, veri, gonder) {
@@ -111,7 +104,7 @@ export const yerelApi = {
   async sefAyi(token, ay) {
     if (!sefMi(token)) throw new Error("Yetki yok.");
     const d = oku();
-    const talepler = {}, kararlar = {}, plan = {};
+    const talepler = {}, kararlar = {};
     Object.entries(d.talepler).forEach(([k, v]) => {
       const [pid, a] = k.split("|");
       if (a === ay) talepler[pid] = v;
@@ -119,30 +112,14 @@ export const yerelApi = {
     Object.entries(d.kararlar).forEach(([k, v]) => {
       if (k.split("|")[1].startsWith(ay)) kararlar[k] = v;
     });
-    Object.entries(d.plan).forEach(([k, v]) => {
-      if (k.split("|")[0].startsWith(ay)) plan[k] = v;
-    });
     return {
-      kadro: VARSAYILAN_KADRO, talepler, programlar: d.programlar,
-      kararlar, plan, yayin: d.yayin[ay] || null,
+      kadro: VARSAYILAN_KADRO, talepler, programlar: d.programlar, kararlar,
     };
   },
   async kararVer(token, personelId, gun, durum, not) {
     const d = oku();
     if (durum === null) delete d.kararlar[`${personelId}|${gun}`];
     else d.kararlar[`${personelId}|${gun}`] = { durum, not: not || "" };
-    yaz(d);
-  },
-  async planKaydet(token, atamalar) {
-    const d = oku();
-    Object.entries(atamalar).forEach(([k, v]) => {
-      if (v) d.plan[k] = v; else delete d.plan[k];
-    });
-    yaz(d);
-  },
-  async planYayinla(token, ay, yayinda) {
-    const d = oku();
-    if (yayinda) d.yayin[ay] = Date.now(); else delete d.yayin[ay];
     yaz(d);
   },
   async sefKoduDegistir() {
