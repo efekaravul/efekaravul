@@ -117,6 +117,12 @@ def whoami(static: bool) -> str:
 
 PROJECTS = [
     (
+        "used-car-price-adaboost",
+        "AdaBoost · 15,411 listings",
+        "Encoding picked by cardinality: one-hot for small columns, cross-fitted target encoding for 152 categories.",
+        "R² 0.63 → 0.91 once depth, learning rate and loss were tuned together",
+    ),
+    (
         "sms-spam-detection",
         "MultinomialNB · 5,572 messages",
         "Bag-of-words classification; leakage-safe CountVectorizer fit, duplicate removal, stratified split.",
@@ -189,8 +195,9 @@ def portfolio(static: bool) -> str:
 # --------------------------------------------------------------------------
 
 FOCUS = [
-    ("modeling", "regression · classification · SVM kernels · Naive Bayes · GridSearchCV tuning"),
-    ("data prep", "feature engineering · ordinal & one-hot encoding · MCAR / MAR / MNAR · KNN imputation"),
+    ("modeling", "regression · classification · SVM kernels · Naive Bayes · trees & ensembles"),
+    ("ensembles", "bagging vs boosting · Random Forest · AdaBoost · GridSearchCV tuning"),
+    ("data prep", "ordinal, one-hot & target encoding · MCAR / MAR / MNAR · imputation · outliers"),
     ("discipline", "train / test split · StandardScaler · leakage-safe preprocessing"),
     ("evaluation", "confusion matrix · precision / recall / F1 · imbalanced classes"),
     ("text", "CountVectorizer · bag-of-words · sparse matrices"),

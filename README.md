@@ -14,14 +14,15 @@
 
 <img src="./assets/whoami.svg" width="860" alt="Efe Karavul: aspiring data engineer and machine learning practitioner working in Python, pandas, NumPy and scikit-learn">
 
-<img src="./assets/portfolio.svg" width="860" alt="Featured notebooks: SMS spam detection with MultinomialNB, diamond price regression with SVR, iris species with GaussianNB, and the SVM kernel trick">
+<img src="./assets/portfolio.svg" width="860" alt="Featured notebooks: used car price regression with AdaBoost, SMS spam detection with MultinomialNB, diamond price regression with SVR, iris species with GaussianNB, and the SVM kernel trick">
 
-<img src="./assets/focus.svg" width="860" alt="Focus areas: modeling, data preparation, train/test discipline, evaluation, text vectorization and tooling">
+<img src="./assets/focus.svg" width="860" alt="Focus areas: modeling, ensembles, data preparation, train/test discipline, evaluation, text vectorization and tooling">
 
 </div>
 
 <p align="center">
   <a href="https://github.com/efekaravul/Applied-Data-Engineering-And-Machine-Learning"><code>portfolio</code></a> ·
+  <a href="https://www.kaggle.com/code/efekaravul/used-car-price-adaboost-regression"><code>used-car-price-adaboost</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/sms-spam-multinomial-naive-bayes-practice"><code>sms-spam-detection</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/diamond-price-svm-regression-practice"><code>diamond-price-regression</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/iris-species-gaussian-naive-bayes"><code>iris-species-naive-bayes</code></a> ·
