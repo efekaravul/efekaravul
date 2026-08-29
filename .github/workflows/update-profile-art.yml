@@ -26,7 +26,12 @@ jobs:
 
       - run: pip install -r scripts/requirements.txt
 
-      - name: Scrape the contribution calendar
+      # The public HTML calendar is served from a cache that can lag by a day,
+      # which is how a deleted repo's contributions survived in the rendered
+      # heatmap. The API reflects the real numbers, so hand the script a token.
+      - name: Read the contribution calendar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/fetch_contributions.py
 
       - name: Render the heatmap SVG
