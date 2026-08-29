@@ -1,9 +1,9 @@
 {
  "user": "efekaravul",
- "generated_at": "2026-08-29T08:08:54Z",
+ "generated_at": "2026-08-29T12:40:59Z",
  "from": "2025-08-24",
  "to": "2026-08-29",
- "total": 52,
+ "total": 56,
  "days": [
   {
    "date": "2025-08-24",
@@ -2144,8 +2144,8 @@
   {
    "date": "2026-08-15",
    "week": 50,
-   "level": 2,
-   "count": 4
+   "level": 3,
+   "count": 6
   },
   {
    "date": "2026-08-16",
@@ -2222,14 +2222,14 @@
   {
    "date": "2026-08-28",
    "week": 52,
-   "level": 2,
-   "count": 4
+   "level": 3,
+   "count": 5
   },
   {
    "date": "2026-08-29",
    "week": 52,
    "level": 2,
-   "count": 3
+   "count": 4
   }
  ]
 }
