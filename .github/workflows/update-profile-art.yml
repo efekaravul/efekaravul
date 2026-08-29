@@ -38,3 +38,8 @@ jobs:
         with:
           commit_message: "chore: refresh contribution graph [skip ci]"
           file_pattern: "data/contributions.json assets/contrib-heatmap.svg"
+          # The action defaults the author to whoever triggered the run, which on
+          # a schedule is the repo owner, so every daily refresh landed on the
+          # contribution graph and inflated the very streak this heatmap reports.
+          # Authoring as the bot keeps the graph a record of real work.
+          commit_author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
