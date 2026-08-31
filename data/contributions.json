@@ -1,9 +1,9 @@
 {
  "user": "efekaravul",
- "generated_at": "2026-08-31T00:53:00Z",
+ "generated_at": "2026-08-31T13:51:17Z",
  "from": "2025-09-01",
  "to": "2026-08-31",
- "total": 41,
+ "total": 42,
  "days": [
   {
    "date": "2025-09-01",
@@ -2192,8 +2192,8 @@
   {
    "date": "2026-08-31",
    "week": 52,
-   "level": 2,
-   "count": 2
+   "level": 3,
+   "count": 3
   }
  ]
 }
