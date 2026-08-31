@@ -14,7 +14,7 @@
 
 <img src="./assets/whoami.svg" width="860" alt="Efe Karavul: aspiring data engineer and machine learning practitioner working in Python, pandas, NumPy and scikit-learn">
 
-<img src="./assets/portfolio.svg" width="860" alt="Featured notebooks: used car price regression with AdaBoost, SMS spam detection with MultinomialNB, diamond price regression with SVR, iris species with GaussianNB, and the SVM kernel trick">
+<img src="./assets/portfolio.svg" width="860" alt="Featured notebooks: used car price regression with AdaBoost, SMS spam detection with MultinomialNB, diamond price regression with SVR, iris species with GaussianNB, the SVM kernel trick, Titanic survival with LightGBM, and medical cost regression with LightGBM">
 
 <img src="./assets/focus.svg" width="860" alt="Focus areas: modeling, ensembles, data preparation, train/test discipline, evaluation, text vectorization and tooling">
 
@@ -26,6 +26,8 @@
   <a href="https://www.kaggle.com/code/efekaravul/sms-spam-multinomial-naive-bayes-practice"><code>sms-spam-detection</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/diamond-price-svm-regression-practice"><code>diamond-price-regression</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/iris-species-gaussian-naive-bayes"><code>iris-species-naive-bayes</code></a> ·
+  <a href="https://www.kaggle.com/code/efekaravul/titanic-survival-lightgbm-classification"><code>titanic-lightgbm</code></a> ·
+  <a href="https://www.kaggle.com/code/efekaravul/medical-cost-lightgbm-regression"><code>medical-cost-lightgbm</code></a> ·
   <a href="https://www.kaggle.com/efekaravul"><code>kaggle</code></a> ·
   <a href="mailto:efekaravul@gmail.com"><code>email</code></a>
 </p>

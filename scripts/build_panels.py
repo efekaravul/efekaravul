@@ -146,6 +146,18 @@ PROJECTS = [
         "Polynomial features engineered by hand and visualised in 3D, then the same split found implicitly by a kernel.",
         "100% test accuracy with RBF against 40% with a linear kernel",
     ),
+    (
+        "titanic-lightgbm",
+        "LightGBM · 891 passengers",
+        "FarePerPerson engineered from ticket-sharing count, not family size; tuned via RandomizedSearchCV.",
+        "Corrected recall on survivors: 0.67, not the printed 0.84",
+    ),
+    (
+        "medical-cost-lightgbm",
+        "LightGBM · 1,337 records",
+        "Baseline vs tuned vs Box-Cox-transformed target, benchmarked with a corrected r2_score.",
+        "R² 0.85 → 0.87; untuned Box-Cox beat the tuned RandomizedSearchCV model",
+    ),
 ]
 
 FOOTER = "Every notebook is documented bilingually (TR / EN) — the reasoning, not just the code."
