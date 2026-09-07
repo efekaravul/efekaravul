@@ -1,16 +1,10 @@
 {
  "user": "efekaravul",
- "generated_at": "2026-09-06T10:56:36Z",
- "from": "2025-09-07",
- "to": "2026-09-06",
- "total": 78,
+ "generated_at": "2026-09-07T12:33:14Z",
+ "from": "2025-09-08",
+ "to": "2026-09-07",
+ "total": 93,
  "days": [
-  {
-   "date": "2025-09-07",
-   "week": 0,
-   "level": 0,
-   "count": 0
-  },
   {
    "date": "2025-09-08",
    "week": 0,
@@ -1916,7 +1910,7 @@
   {
    "date": "2026-07-22",
    "week": 45,
-   "level": 2,
+   "level": 1,
    "count": 2
   },
   {
@@ -2012,13 +2006,13 @@
   {
    "date": "2026-08-07",
    "week": 47,
-   "level": 2,
+   "level": 1,
    "count": 2
   },
   {
    "date": "2026-08-08",
    "week": 47,
-   "level": 2,
+   "level": 1,
    "count": 2
   },
   {
@@ -2036,7 +2030,7 @@
   {
    "date": "2026-08-11",
    "week": 48,
-   "level": 4,
+   "level": 2,
    "count": 5
   },
   {
@@ -2054,13 +2048,13 @@
   {
    "date": "2026-08-14",
    "week": 48,
-   "level": 4,
+   "level": 2,
    "count": 4
   },
   {
    "date": "2026-08-15",
    "week": 48,
-   "level": 3,
+   "level": 1,
    "count": 3
   },
   {
@@ -2138,25 +2132,25 @@
   {
    "date": "2026-08-28",
    "week": 50,
-   "level": 3,
+   "level": 1,
    "count": 3
   },
   {
    "date": "2026-08-29",
    "week": 50,
-   "level": 4,
+   "level": 2,
    "count": 4
   },
   {
    "date": "2026-08-30",
    "week": 51,
-   "level": 4,
+   "level": 2,
    "count": 4
   },
   {
    "date": "2026-08-31",
    "week": 51,
-   "level": 3,
+   "level": 1,
    "count": 3
   },
   {
@@ -2186,14 +2180,20 @@
   {
    "date": "2026-09-05",
    "week": 51,
-   "level": 4,
+   "level": 2,
    "count": 6
   },
   {
    "date": "2026-09-06",
    "week": 52,
-   "level": 0,
-   "count": 0
+   "level": 4,
+   "count": 12
+  },
+  {
+   "date": "2026-09-07",
+   "week": 52,
+   "level": 1,
+   "count": 3
   }
  ]
 }
