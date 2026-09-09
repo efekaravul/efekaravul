@@ -7,11 +7,26 @@
 |---|---|
 | [`map.html`](map.html) | Leaflet 1.9.4 + OSM tile. Build step yok, çift tıklayınca açılır. |
 | [`overview.svg`](overview.svg) | 1600×900 stilize kuşbakışı şematik harita. |
-| `scripts/` | Veriyi çeken ve iki çıktıyı üreten pipeline. |
+| `scripts/` | Veriyi çeken ve çıktıları üreten pipeline. |
+| `vendor/` | Leaflet 1.9.4 CSS (BSD-2) — Artifact sürümünde satır içi gömülüyor. |
 | `data/` | Pipeline'ın ürettiği ham + işlenmiş veri (çıktılar buradan yeniden üretilebilir). |
 
 > Kökteki `README.md` bu deponun GitHub profil sayfası olduğu için üzerine yazılmadı;
 > bu iş tamamen `cesme-dolmus/` altında duruyor.
+
+### Telefon için private sürüm
+
+`scripts/gen_artifact.py`, `map.html` ile aynı veriden ayrı bir tek-dosya sürüm üretir:
+private bir Claude Artifact olarak yayımlanmak üzere. İki farkı var:
+
+- **OSM karosu yok.** Artifact güvenlik politikası dış görselleri engellediği için zemin,
+  `data/coast_svg.json` içindeki kıyı poligonundan Leaflet vektör katmanı olarak çiziliyor
+  (kara, adalar, kumsallar). Kıyı ve güzergâhlar doğru, sokak isimleri yok.
+- **Harita + liste.** Telefonda asıl iş listede: 10 kulüp süreye veya numaraya göre sıralanır,
+  karta dokununca harita oraya gider. Doğrulanmamış ücretler rakam yerine rozetle gösterilir.
+
+Leaflet CSS'i satır içi gömülür (aynı politika dış stylesheet'e de izin vermiyor);
+Leaflet JS cdnjs'ten yüklenir.
 
 ---
 
@@ -240,6 +255,7 @@ COAST_W="26.215,38.205,26.425,38.375" COAST_EPS=0.00025 COAST_OUT=coast_simpl.js
 COAST_W="26.155,38.2206,26.485,38.3663" COAST_EPS=0.00018 COAST_OUT=coast_svg.json  python3 coast.py
 python3 gen_map.py ../map.html
 python3 gen_svg.py ../overview.svg
+python3 gen_artifact.py ../artifact.html   # telefon/Artifact sürümü (isteğe bağlı)
 cd ../.. && python3 cesme-dolmus/scripts/verify.py
 ```
 
