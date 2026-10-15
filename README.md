@@ -12,16 +12,18 @@
 
 <img src="./assets/contrib-heatmap.svg" width="860" alt="Efe Karavul's GitHub contribution heatmap for the last year">
 
-<img src="./assets/whoami.svg" width="860" alt="Efe Karavul: aspiring data engineer and machine learning practitioner working in Python, pandas, NumPy and scikit-learn">
+<img src="./assets/whoami.svg" width="860" alt="Efe Karavul: third-year Software Engineering student at Istanbul Aydin University, focused on AI/ML Engineering with Python, PyTorch and scikit-learn">
 
-<img src="./assets/portfolio.svg" width="860" alt="Featured notebooks: used car price regression with AdaBoost, SMS spam detection with MultinomialNB, diamond price regression with SVR, iris species with GaussianNB, the SVM kernel trick, Titanic survival with LightGBM, and medical cost regression with LightGBM">
+<img src="./assets/portfolio.svg" width="860" alt="Featured work: applied deep learning with PyTorch, Istanbul housing price prediction with XGBoost and Streamlit, and machine learning notebooks covering regression, classification and ensembles">
 
-<img src="./assets/focus.svg" width="860" alt="Focus areas: modeling, ensembles, data preparation, train/test discipline, evaluation, text vectorization and tooling">
+<img src="./assets/focus.svg" width="860" alt="AI/ML Engineering focus: machine learning, PyTorch, CNNs, feature engineering, leakage-safe pipelines and model evaluation. Next steps: transfer learning, NLP, transformers and generative AI">
 
 </div>
 
 <p align="center">
-  <a href="https://github.com/efekaravul/Applied-Data-Engineering-And-Machine-Learning"><code>portfolio</code></a> ·
+  <a href="https://github.com/efekaravul/Applied-Deep-Learning-And-Generative-AI"><code>deep-learning</code></a> ·
+  <a href="https://github.com/efekaravul/istanbul-housing-price-prediction"><code>istanbul-housing</code></a> ·
+  <a href="https://github.com/efekaravul/Applied-Data-Engineering-And-Machine-Learning"><code>machine-learning</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/used-car-price-adaboost-regression"><code>used-car-price-adaboost</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/sms-spam-multinomial-naive-bayes-practice"><code>sms-spam-detection</code></a> ·
   <a href="https://www.kaggle.com/code/efekaravul/diamond-price-svm-regression-practice"><code>diamond-price-regression</code></a> ·

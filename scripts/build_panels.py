@@ -38,15 +38,15 @@ INFO_VALUE_X = 494.0
 INFO_RIGHT = 842.0
 
 IDENTITY = [
-    ("Role", "Data Engineering & Machine Learning"),
-    ("Focus", "End-to-end pipelines, predictive models"),
-    ("Language", "Python 3.12"),
-    ("Env", "PyCharm · Jupyter · Git"),
-    ("Portfolio", "Applied-Data-Engineering-And-ML"),
+    ("Role", "AI/ML Engineering"),
+    ("Focus", "Machine learning · deep learning"),
+    ("Study", "Software Engineering · Year 3"),
+    ("School", "Istanbul Aydin University"),
+    ("Stack", "Python · PyTorch · scikit-learn"),
     ("Kaggle", "kaggle.com/efekaravul"),
     ("Docs", "Bilingual TR / EN on every notebook"),
     ("Contact", "efekaravul@gmail.com"),
-    ("Status", "Learning in public, one notebook at a time"),
+    ("Status", "Building, training, evaluating"),
 ]
 
 SWATCHES = ["#ff7b72", "#ffa657", "#e3b341", "#7ee787",
@@ -80,7 +80,7 @@ def whoami(static: bool) -> str:
         f'<text x="{INFO_X}" y="78" font-size="18" font-weight="700" fill="{P.ACCENT}">'
         f"efe.karavul</text>"
         f'<text x="{INFO_X}" y="97" font-size="11" fill="{P.DIM}">'
-        f"aspiring data engineer &amp; ml practitioner</text></g>"
+        f"building toward AI/ML engineering</text></g>"
     )
 
     attrs, anim = P.reveal(1, static)
@@ -116,6 +116,18 @@ def whoami(static: bool) -> str:
 # --------------------------------------------------------------------------
 
 PROJECTS = [
+    (
+        "applied-deep-learning-and-generative-ai",
+        "PyTorch · in progress",
+        "Hands-on training loops, regression, binary and multiclass classification, and CIFAR-10 CNNs.",
+        "Current: PyTorch and computer vision · Next: transfer learning, transformers, GPT",
+    ),
+    (
+        "istanbul-housing-price-prediction",
+        "XGBoost · Streamlit",
+        "Housing price prediction with feature engineering, cross-validation and a Streamlit application.",
+        "Six model families compared · preprocessing inside scikit-learn pipelines",
+    ),
     (
         "used-car-price-adaboost",
         "AdaBoost · 15,411 listings",
@@ -207,17 +219,17 @@ def portfolio(static: bool) -> str:
 # --------------------------------------------------------------------------
 
 FOCUS = [
-    ("modeling", "regression · classification · SVM kernels · Naive Bayes · trees & ensembles"),
-    ("ensembles", "bagging vs boosting · Random Forest · AdaBoost · GridSearchCV tuning"),
-    ("data prep", "ordinal, one-hot & target encoding · MCAR / MAR / MNAR · imputation · outliers"),
-    ("discipline", "train / test split · StandardScaler · leakage-safe preprocessing"),
-    ("evaluation", "confusion matrix · precision / recall / F1 · imbalanced classes"),
-    ("text", "CountVectorizer · bag-of-words · sparse matrices"),
-    ("tooling", "pandas · NumPy · scikit-learn · Matplotlib · Seaborn · Plotly · Jupyter"),
+    ("ML", "regression · classification · ensembles · XGBoost · LightGBM"),
+    ("deep learning", "PyTorch · autograd · training loops · checkpoints · CNNs"),
+    ("data prep", "pandas · NumPy · feature engineering · encoding · imputation"),
+    ("discipline", "train / test splits · leakage-safe pipelines · cross-validation"),
+    ("evaluation", "baselines · RMSE / MAE · precision / recall / F1 · error analysis"),
+    ("next steps", "transfer learning · NLP · transformers · generative AI"),
+    ("tooling", "Python · scikit-learn · PyTorch · Streamlit · Jupyter · Git"),
 ]
 
-NOW = ("Moving from data analysis into data engineering: scalable pipelines, "
-       "leakage-safe preprocessing and honest model evaluation.")
+NOW = ("AI/ML engineering: building models, comparing baselines, "
+       "and turning experiments into applications.")
 
 
 def focus(static: bool) -> str:
